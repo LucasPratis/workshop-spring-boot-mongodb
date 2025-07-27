@@ -61,17 +61,14 @@ public class UserResource {
 		obj.setId(id);
 		obj = service.insert(obj);
 		return ResponseEntity.noContent().build();
-		
-	}	
-		
-		
-		@GetMapping("/{id}/posts")
-		public ResponseEntity<List<Post>> findPost(@PathVariable String id) {
-			User obj = service.findById(id);
-			return ResponseEntity.ok().body(obj.getPosts());
-			
-		
-		
+
+	}
+
+	@GetMapping("/{id}/posts")
+	public ResponseEntity<List<Post>> findPost(@PathVariable String id) {
+		User obj = service.findById(id);
+		return ResponseEntity.ok().body(obj.getPosts());
+
 	}
 
 }
