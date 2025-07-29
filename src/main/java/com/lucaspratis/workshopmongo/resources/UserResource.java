@@ -48,6 +48,14 @@ public class UserResource {
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
+	
+	@PostMapping("/fila")
+	public ResponseEntity<Void> isertQueue(@RequestBody UserDTO objDto){
+		User obj = service.fromDTO(objDto);
+		UserService userService = new UserService();
+		userService.createOrUpdate(obj);
+		return null;
+	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable String id) {
