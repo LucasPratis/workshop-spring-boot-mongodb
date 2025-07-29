@@ -3,6 +3,7 @@ package com.lucaspratis.workshopmongo.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import com.lucaspratis.workshopmongo.domain.User;
@@ -15,6 +16,15 @@ public class UserService {
 
 	@Autowired
 	private UserRepository repo;
+	
+	@Autowired
+	private KafkaTemplate<String, User> kafkaTemplate;
+	
+	public User createOrUpdate (User user) {
+		User saved = repo.save(user);
+		kafkaTemplate.send("register.user", saved);
+		return saved;
+	}
 
 	public List<User> findAll() {
 		return repo.findAll();
@@ -47,5 +57,7 @@ public class UserService {
 	public User fromDTO(UserDTO objDto) {
 		return new User(objDto.getId(), objDto.getName(), objDto.getEmail());
 	}
+	
+	
 
 }
