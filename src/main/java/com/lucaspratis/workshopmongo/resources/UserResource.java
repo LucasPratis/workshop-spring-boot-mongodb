@@ -27,6 +27,7 @@ public class UserResource {
 
 	@Autowired
 	private UserService service;
+	private URI uri;
 
 	@GetMapping
 	public ResponseEntity<List<UserDTO>> findAll() {
@@ -52,9 +53,8 @@ public class UserResource {
 	@PostMapping("/fila")
 	public ResponseEntity<Void> isertQueue(@RequestBody UserDTO objDto){
 		User obj = service.fromDTO(objDto);
-		UserService userService = new UserService();
-		userService.createOrUpdate(obj);
-		return null;
+		service.createOrUpdate(obj);
+		return ResponseEntity.created(uri).build();
 	}
 
 	@DeleteMapping("/{id}")
