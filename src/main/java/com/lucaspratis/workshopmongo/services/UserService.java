@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lucaspratis.workshopmongo.domain.User;
 import com.lucaspratis.workshopmongo.dto.UserDTO;
 import com.lucaspratis.workshopmongo.repository.UserRepository;
@@ -14,15 +16,25 @@ import com.lucaspratis.workshopmongo.services.exception.ObjectNotFoundException;
 @Service
 public class UserService {
 
+	private final ObjectMapper objectMapper = new ObjectMapper();
+	
 	@Autowired
 	private UserRepository repo;
 	
 	@Autowired
-	private KafkaTemplate<String, User> kafkaTemplate;
+	private final KafkaTemplate<String, String> kafkaTemplate;
 	
-	public User createOrUpdate (User user) {
+	public UserService(KafkaTemplate<String, String> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;    }
+	
+	
+	public User createOrUpdate (User user){
 		User saved = repo.save(user);
-		kafkaTemplate.send("register.user", saved);
+		try {
+			kafkaTemplate.send("register.user", objectMapper.writeValueAsString(user));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 		return saved;
 	}
 

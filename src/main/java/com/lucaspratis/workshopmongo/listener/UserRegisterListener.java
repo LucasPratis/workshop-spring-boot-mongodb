@@ -12,11 +12,16 @@ public class UserRegisterListener {
 	
 	@Autowired
 	private UserRepository repo;
+
 	
 	@KafkaListener(topics = "register.user", groupId = "user-group")
 	public void listen(User user) {
 		repo.save(user);
+		
 	}
+	
+	
+	
 
 
 }
